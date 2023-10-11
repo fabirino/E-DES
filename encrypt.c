@@ -1,5 +1,5 @@
-#include "sboxExample.h"
 #include "sbox.h"
+#include "sboxExample.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,12 +26,51 @@ void char_to_bytes(char *input, uint8_t *output, int len) {
     }
 }
 
-// TODO: 
+// TODO:
 void create_SBoxes(SBox *SBoxes, uint8_t *passwordBytes) {
 }
 
+//   Used to transform a 4 byte value using an S-Box
+void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
+    uint8_t index = input[3];
+    output[0] = SBox.s[index];
 
-void feistel_networks() {
+    index = (index ^ input[2]);
+    output[1] = SBox.s[index];
+
+    index = (index ^ input[1]);
+    output[2] = SBox.s[index];
+
+    index = (index ^ input[0]);
+    output[3] = SBox.s[index];
+}
+
+// Encrypts a block of 64 bits
+void feistel_networks(SBox *SBoxes) {
+
+    uint8_t block[8]; // correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
+    // Split the block in 2 equal parts
+    uint8_t block_left[4];
+    uint8_t block_right[4];
+    for (int i = 0; i < 8; i++) {
+        if (i < 4) {
+            block_left[i] = block[i];
+        } else {
+            block_right[i - 4] = block[i];
+        }
+    }
+
+    // Create the next blocks
+    uint8_t block_left_next[4];
+    uint8_t block_right_next[4];
+    // The next block left is the current block right
+    for (int i = 0; i < 4; i++) {
+        block_left_next[i] = block_right[i];
+    }
+    // The next block right is the current block left XOR result of the current block right with correspondent S-Box
+    f_SBox(SBoxes[0], block_right, block_right_next);
+    block_right_next[0] = block_right_next[0] ^ block_left[0];
+    
 
 }
 
@@ -80,8 +119,9 @@ int main(int argc, char **argv) {
     sbox_write(&SBoxes[14], SBox_15);
     sbox_write(&SBoxes[15], SBox_16);
 
-    
-    
+    // Encrypt the message
+
+
 
     return 0;
 }
