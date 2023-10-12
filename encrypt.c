@@ -46,9 +46,9 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
 }
 
 // Encrypts a block of 64 bits
-void feistel_networks(SBox *SBoxes) {
-
-    uint8_t block[8]; // correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
+void feistel_networks(SBox *SBoxes, uint8_t block[8]) {
+    // uint8_t block[8]correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
+    
     // Split the block in 2 equal parts
     uint8_t block_left[4];
     uint8_t block_right[4];
@@ -63,14 +63,17 @@ void feistel_networks(SBox *SBoxes) {
     // Create the next blocks
     uint8_t block_left_next[4];
     uint8_t block_right_next[4];
+    
     // The next block left is the current block right
     for (int i = 0; i < 4; i++) {
         block_left_next[i] = block_right[i];
     }
+
     // The next block right is the current block left XOR result of the current block right with correspondent S-Box
     f_SBox(SBoxes[0], block_right, block_right_next);
-    block_right_next[0] = block_right_next[0] ^ block_left[0];
-    
+    for (int i = 0; i < 4; i++) {
+        block_right_next[i] = block_right_next[i] ^ block_left[i];
+    }
 
 }
 
