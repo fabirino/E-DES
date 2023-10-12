@@ -86,10 +86,10 @@ int main(int argc, char **argv) {
     // }
 
     // char *password = argv[1];
-    char *password = "abcdefghijklmnopqrstuvwxyz123456";
+    char *password = "abcdefghijklmnop";
 
     // Validate the arguments
-    if (strlen(password) != PW_LEN) {
+    if (strlen(password)*2 != PW_LEN) {
         printf("Key must be 32 characters long\n");
         return 1;
     }
@@ -123,7 +123,6 @@ int main(int argc, char **argv) {
     sbox_write(&SBoxes[15], SBox_16);
 
     // Encrypt the message
-
 
 
     return 0;
