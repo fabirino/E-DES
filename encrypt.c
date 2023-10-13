@@ -80,16 +80,17 @@ void feistel_networks(SBox *SBoxes, uint8_t block[8]) {
 int main(int argc, char **argv) {
 
     // Get the arguments of the program
-    // if (argc != 2) {
-    //     printf("Usage: ./encrypt <32-characters key>\n");
-    //     return 1;
-    // }
+    if (argc != 2) {
+        printf("Usage: ./encrypt <32-characters key>\n");
+        return 1;
+    }
 
-    // char *password = argv[1];
-    char *password = "abcdefghijklmnop";
+    char *password = argv[1];
+    // char *password = "abcdefghijklmnopqrstuvxyz1234567";
 
     // Validate the arguments
-    if (strlen(password)*2 != PW_LEN) {
+    if (strlen(password) != PW_LEN) {
+        // printf("LEN: %d\n", strlen(password));
         printf("Key must be 32 characters long\n");
         return 1;
     }
@@ -123,7 +124,6 @@ int main(int argc, char **argv) {
     sbox_write(&SBoxes[15], SBox_16);
 
     // Encrypt the message
-
 
     return 0;
 }
