@@ -2,10 +2,10 @@ FLAGS	= -Wall -g
 CC	= gcc
 
 PROG1 = encrypt
-OBJS1 = encrypt.o sbox.o
+OBJS1 = encrypt.o sbox.o e-des.o
 
 PROG2 = decrypt
-OBJS2 = decrypt.o sbox.o
+OBJS2 = decrypt.o sbox.o e-des.o
 
 ###############################################
 # $@ nome do target
@@ -26,12 +26,14 @@ clean:
 
 sbox.o: sbox.h sbox.c
 
+e-des.o: e-des.h e-des.c
+
 # Encrypt
 encryption.o: encrypt.c sbox.c
 
-encrypt: encrypt.o sbox.o
+encrypt: encrypt.o sbox.o e-des.o
 
 # Decrypt
 decryption.o: decrypt.c sbox.c
 
-decrypt: decrypt.o sbox.o
+decrypt: decrypt.o sbox.o e-des.o
