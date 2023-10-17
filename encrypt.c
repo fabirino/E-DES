@@ -52,10 +52,10 @@ void read_msg(char **msg) {
     (*msg)[0] = '\0';
     strcat(*msg, buffer);
 
-    // Add padding FIXME: sempre que o input for menor que 64 o padding nao e adicionado
+    // Add padding
     // TODO: fazer a excessao de quando o input e multiplo de 64 fazer um bloco so de padding
     for (int i = bytes_read; i < bytes_read + padding_size; i++) {
-        (*msg)[i] = (char) padding_size;
+        (*msg)[i] = (char)padding_size;
     }
     (*msg)[bytes_read + padding_size] = '\0';
 }
@@ -80,9 +80,9 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
 }
 
 // Encrypts a block of 64 bits
-void feistel_networks(SBox *SBoxes, uint8_t block[8]) {
+void feistel_networks(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
     // uint8_t block[8]correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
-
+    
     // Split the block in 2 equal parts
     uint8_t block_left[4];
     uint8_t block_right[4];
@@ -94,19 +94,36 @@ void feistel_networks(SBox *SBoxes, uint8_t block[8]) {
         }
     }
 
-    // Create the next blocks
-    uint8_t block_left_next[4];
-    uint8_t block_right_next[4];
+    for (int i = 0; i < 16; i++) {
+        // Create the next blocks
+        uint8_t block_left_next[4];
+        uint8_t block_right_next[4];
 
-    // The next block left is the current block right
-    for (int i = 0; i < 4; i++) {
-        block_left_next[i] = block_right[i];
+        // The next block left is the current block right
+        for (int j = 0; j < 4; j++) {
+            block_left_next[j] = block_right[j];
+        }
+
+        // The next block right is the current block left XOR result of the current block right with correspondent S-Box
+        f_SBox(SBoxes[i], block_right, block_right_next);
+        for (int j = 0; j < 4; j++) {
+            block_right_next[j] = block_right_next[j] ^ block_left[j];
+        }
+
+        // Update the blocks
+        for (int j = 0; j < 4; j++) {
+            block_left[j] = block_left_next[j];
+            block_right[j] = block_right_next[j];
+        }
     }
 
-    // The next block right is the current block left XOR result of the current block right with correspondent S-Box
-    f_SBox(SBoxes[0], block_right, block_right_next);
-    for (int i = 0; i < 4; i++) {
-        block_right_next[i] = block_right_next[i] ^ block_left[i];
+    // Merge the blocks
+    for (int i = 0; i < 8; i++) {
+        if (i < 4) {
+            output[i] = block_left[i];
+        } else {
+            output[i] = block_right[i - 4];
+        }
     }
 }
 
@@ -158,11 +175,34 @@ int main(int argc, char **argv) {
 
     // Read the input
     char *input = NULL;
-    read_msg(&input);
-    printf("Input: %s\n", input);
-    printf("Input size: %ld\n", strlen(input));
+    // read_msg(&input);
+
+    // Convert input in bytes
+    // int input_len = strlen(input);
+    // uint8_t input_bytes[input_len];
+    // char_to_bytes(input, input_bytes, input_len);
+    // uint8_t output[input_len];
+
+    // Split input in blocks of 64 bits
+    
+
+    // Test variables
+    uint8_t output[8];
+    uint8_t teste1[] = {01, 00, 00, 00, 00, 00, 00, 00};
+    uint8_t teste2[] = {00, 01, 00, 00, 00, 00, 00, 00};
+    uint8_t teste3[] = {00, 00, 01, 00, 00, 00, 00, 00};
+    uint8_t teste4[] = {00, 00, 00, 01, 00, 00, 00, 00};
+    uint8_t teste5[] = {00, 00, 00, 00, 01, 00, 00, 00};
+    uint8_t teste6[] = {00, 00, 00, 00, 00, 01, 00, 00};
+    uint8_t teste7[] = {00, 00, 00, 00, 00, 00, 01, 00};
+    uint8_t teste8[] = {00, 00, 00, 00, 00, 00, 00, 01};
 
     // Encrypt the message
+    feistel_networks(SBoxes, teste8, output);
+
+    for (int i = 0; i < 8; i++) {
+        printf("%02x ", output[i]);
+    }
 
     return 0;
 }
