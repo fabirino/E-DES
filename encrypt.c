@@ -80,9 +80,9 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
 }
 
 // Encrypts a block of 64 bits
-void feistel_networks(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
+void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
     // uint8_t block[8]correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
-    
+
     // Split the block in 2 equal parts
     uint8_t block_left[4];
     uint8_t block_right[4];
@@ -126,6 +126,16 @@ void feistel_networks(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
         }
     }
 }
+
+
+// Loops through the blocks and encrypts them
+void feitel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len){
+    int num_blocks = input_len / 8;
+    for (int i = 0; i < num_blocks; i++) {
+        feistel_networks_block(SBoxes, &input[i * 8], &output[i * 8]);
+    }
+}
+
 
 int main(int argc, char **argv) {
 
@@ -184,24 +194,27 @@ int main(int argc, char **argv) {
     // uint8_t output[input_len];
 
     // Split input in blocks of 64 bits
-    
 
     // Test variables
-    uint8_t output[8];
-    uint8_t teste1[] = {01, 00, 00, 00, 00, 00, 00, 00};
-    uint8_t teste2[] = {00, 01, 00, 00, 00, 00, 00, 00};
-    uint8_t teste3[] = {00, 00, 01, 00, 00, 00, 00, 00};
-    uint8_t teste4[] = {00, 00, 00, 01, 00, 00, 00, 00};
-    uint8_t teste5[] = {00, 00, 00, 00, 01, 00, 00, 00};
-    uint8_t teste6[] = {00, 00, 00, 00, 00, 01, 00, 00};
-    uint8_t teste7[] = {00, 00, 00, 00, 00, 00, 01, 00};
-    uint8_t teste8[] = {00, 00, 00, 00, 00, 00, 00, 01};
+    uint8_t teste[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                       0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                       0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+                       0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                       0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+                       0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
+                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+    int input_len = sizeof(teste);
+    uint8_t output[input_len];
+
 
     // Encrypt the message
-    feistel_networks(SBoxes, teste8, output);
-
-    for (int i = 0; i < 8; i++) {
+    feitel_networks(SBoxes, teste, output, input_len);
+    for (int i = 0; i < input_len; i++) {
         printf("%02x ", output[i]);
+        if(i % 8 == 7){
+            printf("\n");
+        }
     }
 
     return 0;
