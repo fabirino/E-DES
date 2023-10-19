@@ -3,6 +3,7 @@
 
 int main(int argc, char **argv) {
 
+    // TODO: Uncomment this
     // Get the arguments of the program
     // if (argc != 2) {
     //     printf("Usage: ./encrypt <32-characters key>\n");
