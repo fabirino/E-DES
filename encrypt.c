@@ -50,37 +50,40 @@ int main(int argc, char **argv) {
 
     // Read the input
     char *input = NULL;
-    // read_msg(&input);
+    read_msg(&input);
 
     // Convert input in bytes
-    // int input_len = strlen(input);
-    // uint8_t input_bytes[input_len];
-    // char_to_bytes(input, input_bytes, input_len);
-    // uint8_t output[input_len];
-
-    // Split input in blocks of 64 bits
+    int input_len = strlen(input);
+    uint8_t input_bytes[input_len];
+    char_to_bytes(input, input_bytes, input_len);
+    uint8_t cipher_text[input_len];
 
     // Test variables
-    uint8_t teste[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                       0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                       0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-                       0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-                       0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
-                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-    int input_len = sizeof(teste);
-    uint8_t output[input_len];
+    // uint8_t teste[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    //                    0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    //                    0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+    //                    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+    //                    0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+    //                    0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+    //                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
+    //                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+    // int input_len = sizeof(teste);
+    // uint8_t cipher_text[input_len];
 
 
     // Encrypt the message
-    feitel_networks(SBoxes, teste, output, input_len);
-    for (int i = 0; i < input_len; i++) {
-        printf("%02x ", output[i]);
-        if(i % 8 == 7){
-            printf("\n");
-        }
-    }
+    // feistel_networks(SBoxes, teste, cipher_text, input_len);
+    // for (int i = 0; i < input_len; i++) {
+    //     printf("%02x ", cipher_text[i]);
+    //     if(i % 8 == 7){
+    //         printf("\n");
+    //     }
+    // }
+
+    feistel_networks(SBoxes, input_bytes, cipher_text, input_len);
+    char cipher_text_str[input_len];
+    bytes_to_char(cipher_text, cipher_text_str, input_len);
+    printf("%s\n", cipher_text_str);
 
     return 0;
 }

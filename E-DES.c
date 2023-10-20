@@ -24,6 +24,12 @@ void char_to_bytes(char *input, uint8_t *output, int len) {
     }
 }
 
+void bytes_to_char(uint8_t *input, char *output, int len) {
+    for (int i = 0; i < len; i++) {
+        output[i] = (char)input[i];
+    }
+}
+
 // Read the message from stdin and add padding
 void read_msg(char **msg) {
     int block_size = 64;
@@ -130,7 +136,7 @@ void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
 }
 
 // Loops through the blocks and encrypts them
-void feitel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
+void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
     int num_blocks = input_len / 8;
     for (int i = 0; i < num_blocks; i++) {
         feistel_networks_block(SBoxes, &input[i * 8], &output[i * 8]);
@@ -189,7 +195,7 @@ void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t outp
     }
 }
 
-void feitel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
+void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
     int num_blocks = input_len / 8;
     for (int i = num_blocks; i >= 0; i--) {
         feistel_networks_block_decrypt(SBoxes, &input[i * 8], &output[i * 8]);

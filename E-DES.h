@@ -14,6 +14,8 @@ void shuffle(uint8_t arr[], int seed);
 
 void char_to_bytes(char *input, uint8_t *output, int len);
 
+void bytes_to_char(uint8_t *input, char *output, int len);
+
 void read_msg(char **msg);
 
 void create_SBoxes(SBox *SBoxes, uint8_t *passwordBytes);
@@ -26,7 +28,7 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]);
 
 void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]);
 
-void feitel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len);
+void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len);
 
 // ============================================================
 // ======================== DECRYPT ===========================
@@ -34,5 +36,5 @@ void feitel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_le
 
 void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t output[8]);
 
-void feitel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len);
+void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len);
 
