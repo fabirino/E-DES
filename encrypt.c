@@ -53,12 +53,15 @@ int main(int argc, char **argv) {
     read_msg(&input);
 
     // Convert input in bytes
-    int input_len = strlen(input);
-    uint8_t input_bytes[input_len];
+    int input_len = sizeof(input); // aqui estava strlen e estava mal por isso
+    int padding_size = 8 - (input_len % 8);
+    uint8_t *input_bytes = (uint8_t *)malloc((input_len + padding_size) * sizeof(uint8_t));
     char_to_bytes(input, input_bytes, input_len);
-    uint8_t cipher_text[input_len];
+    free(input);
+    // Add padding
+    add_padding(input_bytes, input_len);
 
-    // Test variables
+    // // Test variables
     // uint8_t teste[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //                    0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     //                    0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -70,8 +73,7 @@ int main(int argc, char **argv) {
     // int input_len = sizeof(teste);
     // uint8_t cipher_text[input_len];
 
-
-    // Encrypt the message
+    // // Encrypt the message
     // feistel_networks(SBoxes, teste, cipher_text, input_len);
     // for (int i = 0; i < input_len; i++) {
     //     printf("%02x ", cipher_text[i]);
@@ -80,10 +82,13 @@ int main(int argc, char **argv) {
     //     }
     // }
 
+    uint8_t *cipher_text = (uint8_t *)malloc(input_len * sizeof(uint8_t));
     feistel_networks(SBoxes, input_bytes, cipher_text, input_len);
+    free(input_bytes);
     char cipher_text_str[input_len];
     bytes_to_char(cipher_text, cipher_text_str, input_len);
-    printf("%s\n", cipher_text_str);
+    printf("%s", cipher_text_str);
+    free(cipher_text);
 
     return 0;
 }

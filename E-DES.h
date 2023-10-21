@@ -22,6 +22,10 @@ void create_SBoxes(SBox *SBoxes, uint8_t *passwordBytes);
 
 void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]);
 
+void add_padding(uint8_t *input, int len);
+
+void remove_padding(uint8_t *input, int len);
+
 // ============================================================
 // ======================== ENCRYPT ===========================
 // ============================================================
@@ -37,4 +41,5 @@ void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_l
 void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t output[8]);
 
 void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len);
+
 

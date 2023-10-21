@@ -30,9 +30,32 @@ void bytes_to_char(uint8_t *input, char *output, int len) {
     }
 }
 
+void add_padding(uint8_t *input, int len) {
+    // Add padding
+    int block_size = 8;
+    if (len % block_size != 0) {
+        // Add padding to the rest of the block
+        int padding_size = block_size - (len % block_size);
+        for (int i = len; i < len + padding_size; i++) {
+            input[i] = (uint8_t)padding_size;
+        }
+    } else {
+        // Add another block of padding
+        for (int i = len; i < len + block_size; i++) {
+            input[i] = (uint8_t)block_size;
+        }
+    }
+}
+
+void remove_padding(uint8_t *input, int len) {
+    // Remove padding
+    int padding_size = input[len - 1] == 0 ? input[len - 2] : input[len - 1];
+    input[len - padding_size] = '\0';
+}
+
 // Read the message from stdin and add padding
 void read_msg(char **msg) {
-    int block_size = 64;
+    int block_size = 8;
     size_t bytes_read = 0;
 
     // Read size bytes from stdin
@@ -50,18 +73,12 @@ void read_msg(char **msg) {
     }
 
     int padding_size = block_size - (bytes_read % block_size);
-
     // Copy the buffer to the input
-    *msg = (char *)malloc((bytes_read + padding_size + 1) * sizeof(char));
+    *msg = (char *)malloc((bytes_read + 1) * sizeof(char));
     (*msg)[0] = '\0';
     strcat(*msg, buffer);
+    free(buffer);
 
-    // Add padding
-    // TODO: fazer a excessao de quando o input e multiplo de 64 fazer um bloco so de padding
-    for (int i = bytes_read; i < bytes_read + padding_size; i++) {
-        (*msg)[i] = (char)padding_size;
-    }
-    (*msg)[bytes_read + padding_size] = '\0';
 }
 
 // TODO:
@@ -197,7 +214,7 @@ void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t outp
 
 void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
     int num_blocks = input_len / 8;
-    for (int i = num_blocks; i >= 0; i--) {
+    for (int i = 0; i < num_blocks; i++) {
         feistel_networks_block_decrypt(SBoxes, &input[i * 8], &output[i * 8]);
     }
 }

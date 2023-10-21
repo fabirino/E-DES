@@ -52,14 +52,13 @@ int main(int argc, char **argv) {
     read_msg(&input);
 
     // Convert input in bytes
-    int input_len = strlen(input);
-    uint8_t input_bytes[input_len];
+    int input_len = sizeof(input);
+    uint8_t *input_bytes = (uint8_t *) malloc(input_len * sizeof(uint8_t));
     char_to_bytes(input, input_bytes, input_len);
-    uint8_t output[input_len];
+    free(input);
 
-    // Split input in blocks of 64 bits
 
-    // Test variables
+    // // Test variables
     // uint8_t teste[] = {0x3c, 0x58, 0x2b, 0x44, 0x04, 0x4b, 0x5f, 0x1c,
     //                    0x3d, 0x55, 0x20, 0x41, 0x06, 0x4e, 0x69, 0x64,
     //                    0x3d, 0x59, 0x2b, 0x47, 0x05, 0x45, 0x58, 0x19,
@@ -72,7 +71,7 @@ int main(int argc, char **argv) {
     // int input_len = sizeof(teste);
     // uint8_t decipher[input_len];
 
-    // Decrypt the message
+    // // Decrypt the message
     // feistel_networks_decrypt(SBoxes, teste, decipher, input_len);
     // for (int i = 0; i < input_len; i++) {
     //     printf("%02x ", decipher[i]);
@@ -81,10 +80,14 @@ int main(int argc, char **argv) {
     //     }
     // }
 
+    uint8_t *output = (uint8_t *)malloc(input_len * sizeof(uint8_t));
     feistel_networks_decrypt(SBoxes, input_bytes, output, input_len);
+    free(input_bytes);
+    remove_padding(output, input_len);
     char output_str[input_len];
     bytes_to_char(output, output_str, input_len);
-    printf("%s\n", output_str);
+    printf("%s", output_str);
+    free(output);
 
     return 0;
 }
