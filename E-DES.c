@@ -4,24 +4,20 @@
 // ======================== GERAL =============================
 // ============================================================
 
-// Function to shuffle an array
-void shuffle(uint8_t arr[], int seed) {
-    srand(seed);
-    for (int j = PW_LEN - 1; j >= 1; j--) {
-        // we will get random value of i with in range 0 to j-1
-        int i = rand() % j;
-        // swap jth index with ith
-        uint8_t temp = arr[j];
-        arr[j] = arr[i];
-        arr[i] = temp;
-    }
-}
+uint8_t *read_msg_bytes(uint64_t *bytes_read) {
+    uint8_t aux;
+    uint8_t *input_bytes = NULL;
 
-// Function to convert a char array to a byte array
-void char_to_bytes(char *input, uint8_t *output, int len) {
-    for (int i = 0; i < len; i++) {
-        output[i] = (uint8_t)input[i];
+    (*bytes_read) = 0;
+    while (fread(&aux, sizeof(uint8_t), 1, stdin) == 1) {
+        input_bytes = realloc(input_bytes, (++(*bytes_read)) * sizeof(uint8_t));
+        if (!input_bytes) {
+            fprintf(stderr, "Failed to realloc memory!\n");
+            return NULL;
+        }
+        input_bytes[(*bytes_read) - 1] = aux;
     }
+    return input_bytes;
 }
 
 void bytes_to_char(uint8_t *input, char *output, int len) {
@@ -30,26 +26,34 @@ void bytes_to_char(uint8_t *input, char *output, int len) {
     }
 }
 
-void add_padding(uint8_t *input, int len) {
+void add_padding(uint8_t *input, uint64_t *bytes_read) {
+
     // Add padding
     int block_size = 8;
-    if (len % block_size != 0) {
+    if ((*bytes_read) % block_size != 0) {
+        // Realloc the input
+        int padding_size = block_size - ((*bytes_read) % block_size);
+        input = (uint8_t *)realloc(input, ((*bytes_read) + padding_size) * sizeof(uint8_t));
         // Add padding to the rest of the block
-        int padding_size = block_size - (len % block_size);
-        for (int i = len; i < len + padding_size; i++) {
+        for (int i = (*bytes_read); i < (*bytes_read) + padding_size; i++) {
             input[i] = (uint8_t)padding_size;
         }
+        (*bytes_read) += padding_size;
     } else {
+        // Realloc the input
+        input = (uint8_t *)realloc(input, ((*bytes_read) + block_size) * sizeof(uint8_t));
         // Add another block of padding
-        for (int i = len; i < len + block_size; i++) {
+        for (int i = (*bytes_read); i < (*bytes_read) + block_size; i++) {
             input[i] = (uint8_t)block_size;
         }
+        (*bytes_read) += block_size;
     }
 }
 
-void remove_padding(uint8_t *input, int len) {
+void remove_padding(uint8_t *input, uint64_t len) {
     // Remove padding
-    int padding_size = input[len - 1] == 0 ? input[len - 2] : input[len - 1];
+    // int padding_size = input[len - 1] == 0 ? input[len - 2] : input[len - 1];
+    uint8_t padding_size = input[len - 1];
     input[len - padding_size] = '\0';
 }
 
@@ -78,7 +82,6 @@ void read_msg(char **msg) {
     (*msg)[0] = '\0';
     strcat(*msg, buffer);
     free(buffer);
-
 }
 
 // TODO:
@@ -153,7 +156,7 @@ void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
 }
 
 // Loops through the blocks and encrypts them
-void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
+void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t input_len) {
     int num_blocks = input_len / 8;
     for (int i = 0; i < num_blocks; i++) {
         feistel_networks_block(SBoxes, &input[i * 8], &output[i * 8]);
@@ -212,7 +215,7 @@ void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t outp
     }
 }
 
-void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, int input_len) {
+void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t input_len) {
     int num_blocks = input_len / 8;
     for (int i = 0; i < num_blocks; i++) {
         feistel_networks_block_decrypt(SBoxes, &input[i * 8], &output[i * 8]);

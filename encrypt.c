@@ -21,12 +21,10 @@ int main(int argc, char **argv) {
     }
 
     // Convert the password to bytes
-    // FIXME: mudar o metodo de shuffle pois pode nao dar o mesmo resultado noutra linguagem de programacao
-    uint8_t passwordBytes[PW_LEN];
-    char_to_bytes(password, passwordBytes, PW_LEN);
-    // FIXME: mudar a seed para algo mais complexo envolvendo a password e outros valores
-    int seed = passwordBytes[1] ^ 0xdeadbeef;
-    shuffle(passwordBytes, PW_LEN);
+    // uint8_t passwordBytes[PW_LEN];
+    // char_to_bytes(password, passwordBytes, PW_LEN);
+    // int seed = passwordBytes[1] ^ 0xdeadbeef;
+    // shuffle(passwordBytes, PW_LEN);
 
     // Create the S-Boxes
     SBox SBoxes[16];
@@ -48,18 +46,14 @@ int main(int argc, char **argv) {
     sbox_write(&SBoxes[14], SBox_15);
     sbox_write(&SBoxes[15], SBox_16);
 
-    // Read the input
-    char *input = NULL;
-    read_msg(&input);
 
-    // Convert input in bytes
-    int input_len = sizeof(input); // aqui estava strlen e estava mal por isso
-    int padding_size = 8 - (input_len % 8);
-    uint8_t *input_bytes = (uint8_t *)malloc((input_len + padding_size) * sizeof(uint8_t));
-    char_to_bytes(input, input_bytes, input_len);
-    free(input);
+    // Read the input in bytes
+    uint64_t bytes_read;
+    uint8_t *input_bytes = read_msg_bytes(&bytes_read);
+
     // Add padding
-    add_padding(input_bytes, input_len);
+    // bytes_read += 8 - (bytes_read % 8);
+    add_padding(input_bytes, &bytes_read);
 
     // // Test variables
     // uint8_t teste[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -82,13 +76,12 @@ int main(int argc, char **argv) {
     //     }
     // }
 
-    uint8_t *cipher_text = (uint8_t *)malloc(input_len * sizeof(uint8_t));
-    feistel_networks(SBoxes, input_bytes, cipher_text, input_len);
+    // Encrypt
+    uint8_t *cipher_text = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
+    feistel_networks(SBoxes, input_bytes, cipher_text, bytes_read);
     free(input_bytes);
-    char cipher_text_str[input_len];
-    bytes_to_char(cipher_text, cipher_text_str, input_len);
-    printf("%s", cipher_text_str);
-    free(cipher_text);
+    printf("%s", cipher_text);
+    // free(cipher_text);
 
     return 0;
 }

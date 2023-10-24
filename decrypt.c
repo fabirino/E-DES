@@ -20,12 +20,10 @@ int main(int argc, char **argv) {
     }
 
     // Convert the password to bytes
-    // FIXME: mudar o metodo de shuffle pois pode nao dar o mesmo resultado noutra linguagem de programacao
-    uint8_t passwordBytes[PW_LEN];
-    char_to_bytes(password, passwordBytes, PW_LEN);
-    // FIXME: mudar a seed para algo mais complexo envolvendo a password e outros valores
-    int seed = passwordBytes[1] ^ 0xdeadbeef;
-    shuffle(passwordBytes, PW_LEN);
+    // uint8_t passwordBytes[PW_LEN];
+    // char_to_bytes(password, passwordBytes, PW_LEN);
+    // int seed = passwordBytes[1] ^ 0xdeadbeef;
+    // shuffle(passwordBytes, PW_LEN);
 
     // Create the S-Boxes
     SBox SBoxes[16];
@@ -47,16 +45,11 @@ int main(int argc, char **argv) {
     sbox_write(&SBoxes[14], SBox_15);
     sbox_write(&SBoxes[15], SBox_16);
 
-    // Read the input
-    char *input = NULL;
-    read_msg(&input);
-
-    // Convert input in bytes
-    int input_len = sizeof(input);
-    uint8_t *input_bytes = (uint8_t *) malloc(input_len * sizeof(uint8_t));
-    char_to_bytes(input, input_bytes, input_len);
-    free(input);
-
+    // Read the input in bytes
+    uint64_t bytes_read;
+    uint8_t *input_bytes = NULL;
+    input_bytes = read_msg_bytes(&bytes_read);
+    bytes_read = bytes_read - (bytes_read % 8); // Remove some garbage
 
     // // Test variables
     // uint8_t teste[] = {0x3c, 0x58, 0x2b, 0x44, 0x04, 0x4b, 0x5f, 0x1c,
@@ -80,14 +73,20 @@ int main(int argc, char **argv) {
     //     }
     // }
 
-    uint8_t *output = (uint8_t *)malloc(input_len * sizeof(uint8_t));
-    feistel_networks_decrypt(SBoxes, input_bytes, output, input_len);
+    // Decrypt
+    uint8_t *output = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
+    feistel_networks_decrypt(SBoxes, input_bytes, output, bytes_read);
+
+
+    // Remove the padding
+    remove_padding(output, bytes_read);
     free(input_bytes);
-    remove_padding(output, input_len);
-    char output_str[input_len];
-    bytes_to_char(output, output_str, input_len);
-    printf("%s", output_str);
+
+    // Convert the bytes to char
+    char output_str[bytes_read];
+    bytes_to_char(output, output_str, bytes_read);
     free(output);
+    printf("%s", output_str);
 
     return 0;
 }
