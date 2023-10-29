@@ -50,6 +50,11 @@ int main(int argc, char **argv) {
     uint8_t *input_bytes = NULL;
     input_bytes = read_msg_bytes(&bytes_read);
     bytes_read = bytes_read - (bytes_read % 8); // Remove some garbage
+    
+    if(bytes_read == 0){
+        printf("Error reading input\n");
+        return 1;
+    }
 
     // // Test variables
     // uint8_t teste[] = {0x3c, 0x58, 0x2b, 0x44, 0x04, 0x4b, 0x5f, 0x1c,

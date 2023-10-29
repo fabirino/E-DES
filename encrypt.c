@@ -51,6 +51,11 @@ int main(int argc, char **argv) {
     uint64_t bytes_read;
     uint8_t *input_bytes = read_msg_bytes(&bytes_read);
 
+    if(bytes_read == 0){
+        printf("Error reading input\n");
+        return 1;
+    }
+
     // Add padding
     // bytes_read += 8 - (bytes_read % 8);
     add_padding(input_bytes, &bytes_read);

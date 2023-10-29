@@ -18,8 +18,14 @@ Decipher
 ```
 
 ### Python
-
-
+Cipher
+``` shell
+    python3 encrypt.py < ./inputs/example1.txt
+```
+Decipher
+``` shell
+    
+```
 
 ## Devs
 - Fábio Santos
