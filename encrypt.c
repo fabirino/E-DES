@@ -84,9 +84,11 @@ int main(int argc, char **argv) {
     // Encrypt
     uint8_t *cipher_text = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
     feistel_networks(SBoxes, input_bytes, cipher_text, bytes_read);
+    for(int i = 0; i<bytes_read; i++){
+        printf("%c", cipher_text[i]);
+    }
     free(input_bytes);
-    printf("%s", cipher_text);
-    // free(cipher_text);
+    free(cipher_text);
 
     return 0;
 }

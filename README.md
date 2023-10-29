@@ -20,11 +20,11 @@ Decipher
 ### Python
 Cipher
 ``` shell
-    python3 encrypt.py < ./inputs/example1.txt
+    python3 encrypt.py < ./inputs/example1.txt > ./outputs/ciphertext3.txt
 ```
 Decipher
 ``` shell
-    
+    python3 encrypt.py < ./outputs/ciphertext3.txt > ./outputs/plaintext3.txt
 ```
 
 ## Devs
