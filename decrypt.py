@@ -50,10 +50,16 @@ if __name__ == "__main__":
     # Read input from stdin into a bytearray
     input, bytes_read = EDES.read_to_bytearray()
 
+    if(bytes_read == 0):
+        print("No input data")
+        sys.exit(1)
+
+    # Decipher the message
     output = EDES.feistel_networks_decrypt(SBoxes, input)
 
     # Remove padding
-    output = EDES.remove_padding(output).decode('utf-8')
+    output = EDES.remove_padding(output).decode("utf-8")
 
     # Print the output
-    print(output)
+    for i in range(len(output)):
+        print(output[i], end="")

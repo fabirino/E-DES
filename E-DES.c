@@ -4,6 +4,30 @@
 // ======================== GERAL =============================
 // ============================================================
 
+void sha256(char *string, uint8_t *hash) {
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, string, strlen(string));
+    hash = (uint8_t *)malloc(SHA256_DIGEST_LENGTH);
+    if (!hash) {
+        fprintf(stderr, "Failed to malloc memory!\n");
+        return;
+    }
+    SHA256_Final(hash, &sha256);
+}
+
+void sha256_uint8(uint8_t *input, size_t input_len, uint8_t *output) {
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, input, input_len);
+    output = (uint8_t *)malloc(SHA256_DIGEST_LENGTH);
+    if (!output) {
+        fprintf(stderr, "Failed to malloc memory!\n");
+        return;
+    }
+    SHA256_Final(output, &sha256);
+}
+
 uint8_t *read_msg_bytes(uint64_t *bytes_read) {
     uint8_t aux;
     uint8_t *input_bytes = NULL;
@@ -84,8 +108,36 @@ void read_msg(char **msg) {
     free(buffer);
 }
 
-// TODO:
-void create_SBoxes(SBox *SBoxes, uint8_t *passwordBytes) {
+void create_SBoxes(SBox *SBoxes, char *password) {
+
+    // Inicialize the SBoxes
+    for (int i = 0; i < 16; i++) {
+        for (uint8_t j = 0x00; j < 0xff; j++) {
+            SBoxes[i].s[j] = j + 1;
+        }
+    }
+
+    // Shuffle the SBoxes using the password
+    uint8_t *hash = NULL;
+    sha256(password, hash);
+    // print hash
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        printf("%02x ", hash[i]);
+    }
+    for (int i = 0; i < 16; i++) {
+
+        // Shuffle the SBox
+        for (int j = 0; j < 256; j++) {
+            uint8_t value = hash[j];
+            uint8_t aux = SBoxes[i].s[j];
+            SBoxes[i].s[j] = SBoxes[i].s[value];
+            SBoxes[i].s[value] = aux;
+        }
+
+        printf("SBox %d\n", i);
+        // Get the next hash (hash of previous hash)
+        sha256_uint8(hash, SHA256_DIGEST_LENGTH, hash);
+    }
 }
 
 // Used to transform a 4 byte value using an S-Box

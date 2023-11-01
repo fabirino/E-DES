@@ -1,5 +1,6 @@
 FLAGS	= -Wall -g
 CC	= gcc
+LIBS = -lssl -lcrypto
 
 PROG1 = encrypt
 OBJS1 = encrypt.o sbox.o e-des.o
@@ -13,10 +14,10 @@ OBJS2 = decrypt.o sbox.o e-des.o
 all: ${PROG1} ${PROG2} clean
 
 ${PROG1}: ${OBJS1}
-	${CC} ${FLAGS} ${OBJS1} -o $@
+	${CC} ${FLAGS} ${OBJS1} -o $@ ${LIBS}
 
 ${PROG2}: ${OBJS2}
-	${CC} ${FLAGS} ${OBJS2} -o $@
+	${CC} ${FLAGS} ${OBJS2} -o $@ ${LIBS}
 
 .PHONY: clean
 clean:

@@ -3,14 +3,14 @@
 
 int main(int argc, char **argv) {
 
-    // TODO: Uncomment
-    // if (argc != 2) {
-    //     printf("Usage: ./decrypt <32-characters key>\n");
-    //     return 1;
-    // }
+    // Get the arguments of the program
+    if (argc != 2) {
+        printf("Usage: ./decrypt <32-characters key>\n");
+        return 1;
+    }
 
-    // char* input = argv[1];
-    char *password = "abcdefghijklmnopqrstuvxyz1234567";
+    char* password = argv[1];
+    // char *password = "abcdefghijklmnopqrstuvxyz1234567";
 
     // Validate the arguments
     if (strlen(password) != PW_LEN) {
@@ -19,42 +19,26 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // Convert the password to bytes
-    // uint8_t passwordBytes[PW_LEN];
-    // char_to_bytes(password, passwordBytes, PW_LEN);
-    // int seed = passwordBytes[1] ^ 0xdeadbeef;
-    // shuffle(passwordBytes, PW_LEN);
 
     // Create the S-Boxes
     SBox SBoxes[16];
-    // create_SBoxes(SBoxes, passwordBytes);
-    sbox_write(&SBoxes[0], SBox_01);
-    sbox_write(&SBoxes[1], SBox_02);
-    sbox_write(&SBoxes[2], SBox_03);
-    sbox_write(&SBoxes[3], SBox_04);
-    sbox_write(&SBoxes[4], SBox_05);
-    sbox_write(&SBoxes[5], SBox_06);
-    sbox_write(&SBoxes[6], SBox_07);
-    sbox_write(&SBoxes[7], SBox_08);
-    sbox_write(&SBoxes[8], SBox_09);
-    sbox_write(&SBoxes[9], SBox_10);
-    sbox_write(&SBoxes[10], SBox_11);
-    sbox_write(&SBoxes[11], SBox_12);
-    sbox_write(&SBoxes[12], SBox_13);
-    sbox_write(&SBoxes[13], SBox_14);
-    sbox_write(&SBoxes[14], SBox_15);
-    sbox_write(&SBoxes[15], SBox_16);
-
-    // Read the input in bytes
-    uint64_t bytes_read;
-    uint8_t *input_bytes = NULL;
-    input_bytes = read_msg_bytes(&bytes_read);
-    bytes_read = bytes_read - (bytes_read % 8); // Remove some garbage
-    
-    if(bytes_read == 0){
-        printf("Error reading input\n");
-        return 1;
-    }
+    create_SBoxes(SBoxes, password);
+    // sbox_write(&SBoxes[0], SBox_01);
+    // sbox_write(&SBoxes[1], SBox_02);
+    // sbox_write(&SBoxes[2], SBox_03);
+    // sbox_write(&SBoxes[3], SBox_04);
+    // sbox_write(&SBoxes[4], SBox_05);
+    // sbox_write(&SBoxes[5], SBox_06);
+    // sbox_write(&SBoxes[6], SBox_07);
+    // sbox_write(&SBoxes[7], SBox_08);
+    // sbox_write(&SBoxes[8], SBox_09);
+    // sbox_write(&SBoxes[9], SBox_10);
+    // sbox_write(&SBoxes[10], SBox_11);
+    // sbox_write(&SBoxes[11], SBox_12);
+    // sbox_write(&SBoxes[12], SBox_13);
+    // sbox_write(&SBoxes[13], SBox_14);
+    // sbox_write(&SBoxes[14], SBox_15);
+    // sbox_write(&SBoxes[15], SBox_16);
 
     // // Test variables
     // uint8_t teste[] = {0x3c, 0x58, 0x2b, 0x44, 0x04, 0x4b, 0x5f, 0x1c,
@@ -77,6 +61,18 @@ int main(int argc, char **argv) {
     //         printf("\n");
     //     }
     // }
+
+
+    // Read the input in bytes
+    uint64_t bytes_read;
+    uint8_t *input_bytes = NULL;
+    input_bytes = read_msg_bytes(&bytes_read);
+    bytes_read = bytes_read - (bytes_read % 8); // Remove some garbage
+    
+    if(bytes_read == 0){
+        printf("Error reading input\n");
+        return 1;
+    }
 
     // Decrypt
     uint8_t *output = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));

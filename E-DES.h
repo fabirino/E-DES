@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/sha.h>
 
 #define PW_LEN 32
 
@@ -9,6 +10,7 @@
 // ======================== GERAL =============================
 // ============================================================
 
+void sha256(char *string, uint8_t *hash);
 
 void bytes_to_char(uint8_t *input, char *output, int len);
 
@@ -16,7 +18,7 @@ void read_msg(char **msg);
 
 uint8_t *read_msg_bytes(uint64_t *bytes_read);
 
-void create_SBoxes(SBox *SBoxes, uint8_t *passwordBytes);
+void create_SBoxes(SBox *SBoxes, char *password);
 
 void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]);
 
