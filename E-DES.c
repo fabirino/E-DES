@@ -5,27 +5,39 @@
 // ============================================================
 
 void sha256(char *string, uint8_t *hash) {
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, string, strlen(string));
-    hash = (uint8_t *)malloc(SHA256_DIGEST_LENGTH);
-    if (!hash) {
-        fprintf(stderr, "Failed to malloc memory!\n");
-        return;
-    }
-    SHA256_Final(hash, &sha256);
+    EVP_MD_CTX *mdctx;
+    const EVP_MD *md;
+
+    md = EVP_sha256();
+    mdctx = EVP_MD_CTX_new();
+
+    EVP_DigestInit_ex(mdctx, md, NULL);
+    EVP_DigestUpdate(mdctx, string, strlen(string));
+    EVP_DigestFinal_ex(mdctx, hash, NULL);
+    EVP_MD_CTX_free(mdctx);
 }
 
 void sha256_uint8(uint8_t *input, size_t input_len, uint8_t *output) {
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, input, input_len);
-    output = (uint8_t *)malloc(SHA256_DIGEST_LENGTH);
-    if (!output) {
-        fprintf(stderr, "Failed to malloc memory!\n");
+    EVP_MD_CTX *mdctx;
+    const EVP_MD *md;
+
+    md = EVP_sha256();
+    mdctx = EVP_MD_CTX_new();
+
+    if (mdctx == NULL) {
+        printf("Error in sha256\n");
         return;
     }
-    SHA256_Final(output, &sha256);
+
+    if (EVP_DigestInit_ex(mdctx, md, NULL) != 1 ||
+        EVP_DigestUpdate(mdctx, input, input_len) != 1 ||
+        EVP_DigestFinal_ex(mdctx, output, NULL) != 1) {
+        EVP_MD_CTX_free(mdctx);
+        printf("Error in sha256\n");
+        return; // Hashing failed
+    }
+
+    EVP_MD_CTX_free(mdctx);
 }
 
 uint8_t *read_msg_bytes(uint64_t *bytes_read) {
@@ -118,23 +130,25 @@ void create_SBoxes(SBox *SBoxes, char *password) {
     }
 
     // Shuffle the SBoxes using the password
-    uint8_t *hash = NULL;
-    sha256(password, hash);
-    // print hash
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        printf("%02x ", hash[i]);
+    uint8_t *hash = (uint8_t *)malloc(SHA256_DIGEST_LENGTH * sizeof(uint8_t));
+    if (hash == NULL) {
+        printf("Error allocating memory\n");
+        return; // Memory allocation failed
     }
+
+    sha256(password, hash);
+
     for (int i = 0; i < 16; i++) {
 
         // Shuffle the SBox
         for (int j = 0; j < 256; j++) {
-            uint8_t value = hash[j];
+            uint8_t value = hash[j % 32];
+
             uint8_t aux = SBoxes[i].s[j];
             SBoxes[i].s[j] = SBoxes[i].s[value];
             SBoxes[i].s[value] = aux;
         }
 
-        printf("SBox %d\n", i);
         // Get the next hash (hash of previous hash)
         sha256_uint8(hash, SHA256_DIGEST_LENGTH, hash);
     }

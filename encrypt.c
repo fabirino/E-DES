@@ -10,11 +10,10 @@ int main(int argc, char **argv) {
     }
 
     char *password = argv[1];
-    // char *password = "abcdefghijklmnopqrstuvxyz1234567";
+    // char *password = "asdkfjaslk1111111111111111111111";
 
     // Validate the arguments
     if (strlen(password) != PW_LEN) {
-        // printf("LEN: %d\n", strlen(password));
         printf("Key must be 32 characters long\n");
         return 1;
     }
@@ -23,15 +22,6 @@ int main(int argc, char **argv) {
     SBox SBoxes[16];
     create_SBoxes(SBoxes, password);
 
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j< 256; j++){
-            printf("%02x ", SBoxes[i].s[j]);
-            if(j % 16 == 15){
-                printf("\n");
-            }
-        }
-        printf("\n");
-    }
     // sbox_write(&SBoxes[0], SBox_01);
     // sbox_write(&SBoxes[1], SBox_02);
     // sbox_write(&SBoxes[2], SBox_03);
@@ -70,27 +60,27 @@ int main(int argc, char **argv) {
     //     }
     // }
 
-    // // Read the input in bytes
-    // uint64_t bytes_read;
-    // uint8_t *input_bytes = read_msg_bytes(&bytes_read);
+    // Read the input in bytes
+    uint64_t bytes_read;
+    uint8_t *input_bytes = read_msg_bytes(&bytes_read);
 
-    // if(bytes_read == 0){
-    //     printf("Error reading input\n");
-    //     return 1;
-    // }
+    if(bytes_read == 0){
+        printf("Error reading input\n");
+        return 1;
+    }
 
-    // // Add padding
-    // // bytes_read += 8 - (bytes_read % 8);
-    // add_padding(input_bytes, &bytes_read);
+    // Add padding
+    // bytes_read += 8 - (bytes_read % 8);
+    add_padding(input_bytes, &bytes_read);
 
-    // // Encrypt
-    // uint8_t *cipher_text = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
-    // feistel_networks(SBoxes, input_bytes, cipher_text, bytes_read);
-    // for(int i = 0; i<bytes_read; i++){
-    //     printf("%c", cipher_text[i]);
-    // }
-    // free(input_bytes);
-    // free(cipher_text);
+    // Encrypt
+    uint8_t *cipher_text = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
+    feistel_networks(SBoxes, input_bytes, cipher_text, bytes_read);
+    for(int i = 0; i<bytes_read; i++){
+        printf("%c", cipher_text[i]);
+    }
+    free(input_bytes);
+    free(cipher_text);
 
     return 0;
 }
