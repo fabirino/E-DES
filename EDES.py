@@ -1,4 +1,5 @@
 import sys
+import hashlib
 
 PW_LEN = 32
 
@@ -7,18 +8,22 @@ PW_LEN = 32
 # ============================================================
 
 
-def suffle():
-    pass
+def sha256(input):
+    sha256 = hashlib.sha256()
+    sha256.update(input.encode("utf-8"))
+    sha256_bytes = sha256.digest()
+    sha256_bytearray = bytearray(sha256_bytes)
+
+    return sha256_bytearray
 
 
-def char_to_bytes(input):
-    output = []
-    for i in range(len(input)):
-        # output.append(format(ord(input[i]), 'x')) # 0x63
-        # output.append(hex(ord(input[i])))           # 63
-        output.append(bytes(ord(input[i])))         # b'c'
+def sha256_bytearray(byte_array):
+    sha256 = hashlib.sha256()
+    sha256.update(byte_array)
+    sha256_bytes = sha256.digest()
+    sha256_bytearray = bytearray(sha256_bytes)
 
-    return output
+    return sha256_bytearray
 
 
 def read_to_bytearray():
@@ -28,15 +33,15 @@ def read_to_bytearray():
         data = bytearray(sys.stdin.buffer.read())
         bytes_read = len(data)
 
-        return data , bytes_read
+        return data, bytes_read
     except Exception as e:
         print("An error occurred:", e)
         return None, 0
-    
+
 
 def add_padding(input, bytes_read):
     # Add padding
-    if(bytes_read % 8 != 0):
+    if (bytes_read % 8 != 0):
         padding_size = 8 - (bytes_read % 8)
         for _ in range(padding_size):
             input.append(padding_size)
@@ -52,9 +57,24 @@ def remove_padding(input):
     return input[:-padding_size]
 
 
-# TODO: implementar
-def create_SBoxes(password_bytes):
-    pass
+def create_SBoxes(password):
+    # Init the SBoxes
+    SBoxes = []
+    for _ in range(16):
+        SBoxes.append(bytearray([j for j in range(256)]))
+
+    hash = sha256(password)
+
+    # Shuffle the SBoxes
+    for i in range(16):
+        for j in range(256):
+            value = hash[j % 32]
+            aux = SBoxes[i][j]
+            SBoxes[i][j] = SBoxes[i][value]
+            SBoxes[i][value] = aux
+        hash = sha256_bytearray(hash)
+
+    return SBoxes
 
 
 def f_SBox(SBox, input):

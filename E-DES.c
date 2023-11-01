@@ -125,10 +125,12 @@ void create_SBoxes(SBox *SBoxes, char *password) {
     // Inicialize the SBoxes
     for (int i = 0; i < 16; i++) {
         for (uint8_t j = 0x00; j < 0xff; j++) {
-            SBoxes[i].s[j] = j + 1;
+            SBoxes[i].s[j] = j;
         }
+        SBoxes[i].s[0xff] = 0xff;
     }
-
+    
+    
     // Shuffle the SBoxes using the password
     uint8_t *hash = (uint8_t *)malloc(SHA256_DIGEST_LENGTH * sizeof(uint8_t));
     if (hash == NULL) {

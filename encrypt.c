@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     uint64_t bytes_read;
     uint8_t *input_bytes = read_msg_bytes(&bytes_read);
 
-    if(bytes_read == 0){
+    if (bytes_read == 0) {
         printf("Error reading input\n");
         return 1;
     }
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     // Encrypt
     uint8_t *cipher_text = (uint8_t *)malloc(bytes_read * sizeof(uint8_t));
     feistel_networks(SBoxes, input_bytes, cipher_text, bytes_read);
-    for(int i = 0; i<bytes_read; i++){
+    for (int i = 0; i < bytes_read; i++) {
         printf("%c", cipher_text[i]);
     }
     free(input_bytes);

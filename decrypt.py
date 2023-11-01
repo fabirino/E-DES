@@ -4,29 +4,23 @@ import sboxExample
 
 if __name__ == "__main__":
 
-    # TODO: descomentar
 
     # Get the arguments of the program
-    # if(len(sys.argv) != 2):
-    #     print("Usage: python3 encrypt.py <message>")
-    #     sys.exit(1)
+    if(len(sys.argv) != 2):
+        print("Usage: python3 encrypt.py <message>")
+        sys.exit(1)
 
-    # password = sys.argv[1]
-    password = "abcdefghgijklmnopqrstuvxz1234567"
+    password = sys.argv[1]
+    # password = "abcdefghgijklmnopqrstuvxz1234567"
 
     # Validate the arguments
     if (len(password) != EDES.PW_LEN):
         print("Key must have 32 characters")
         sys.exit(1)
 
-    # TODO:
-    # Convert the password to bytes
-    password_bytes = EDES.char_to_bytes(password)
-    # pw_shuffled = EDES.suffle(password_bytes)
 
-    # Create SBoxes
-    # SBoxes = EDES.create_SBoxes(pw_shuffled)
-    SBoxes = sboxExample.load_SBoxes()
+    SBoxes = EDES.create_SBoxes(password)
+    # SBoxes = sboxExample.load_SBoxes()
 
     # teste = bytearray([0x3c, 0x58, 0x2b, 0x44, 0x04, 0x4b, 0x5f, 0x1c,
     #                    0x3d, 0x55, 0x20, 0x41, 0x06, 0x4e, 0x69, 0x64,
@@ -47,6 +41,7 @@ if __name__ == "__main__":
     #     if(i % 8 == 7):
     #         print()
 
+
     # Read input from stdin into a bytearray
     input, bytes_read = EDES.read_to_bytearray()
 
@@ -54,12 +49,10 @@ if __name__ == "__main__":
         print("No input data")
         sys.exit(1)
 
-    # Decipher the message
+    # Decipher the message 
     output = EDES.feistel_networks_decrypt(SBoxes, input)
-
     # Remove padding
-    output = EDES.remove_padding(output).decode("utf-8")
+    output = EDES.remove_padding(output)
 
-    # Print the output
-    for i in range(len(output)):
-        print(output[i], end="")
+    sys.stdout.buffer.write(output)
+    
