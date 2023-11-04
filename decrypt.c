@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 
     // Remove the padding
-    remove_padding(output, bytes_read);
+    remove_padding(output, &bytes_read);
     free(input_bytes);
 
     // Convert the bytes to char

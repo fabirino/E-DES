@@ -86,11 +86,12 @@ void add_padding(uint8_t *input, uint64_t *bytes_read) {
     }
 }
 
-void remove_padding(uint8_t *input, uint64_t len) {
+void remove_padding(uint8_t *input, uint64_t *len) {
     // Remove padding
     // int padding_size = input[len - 1] == 0 ? input[len - 2] : input[len - 1];
-    uint8_t padding_size = input[len - 1];
-    input[len - padding_size] = '\0';
+    uint8_t padding_size = input[(*len) - 1];
+    (*len) -= padding_size;
+    input[(*len) - padding_size] = '\0';
 }
 
 // Read the message from stdin and add padding

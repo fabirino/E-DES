@@ -25,7 +25,7 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]);
 
 void add_padding(uint8_t *input, uint64_t *bytes_read);
 
-void remove_padding(uint8_t *input, uint64_t len);
+void remove_padding(uint8_t *input, uint64_t *len);
 
 // ============================================================
 // ======================== ENCRYPT ===========================
