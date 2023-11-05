@@ -87,14 +87,14 @@ void add_padding(uint8_t *input, uint64_t *bytes_read) {
 }
 
 void remove_padding(uint8_t *input, uint64_t *len) {
-    // Remove padding
+    
     // int padding_size = input[len - 1] == 0 ? input[len - 2] : input[len - 1];
     uint8_t padding_size = input[(*len) - 1];
     (*len) -= padding_size;
     input[(*len) - padding_size] = '\0';
 }
 
-// Read the message from stdin and add padding
+
 void read_msg(char **msg) {
     int block_size = 8;
     size_t bytes_read = 0;
@@ -157,7 +157,7 @@ void create_SBoxes(SBox *SBoxes, char *password) {
     }
 }
 
-// Used to transform a 4 byte value using an S-Box
+
 void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
     uint8_t index = input[3];
     output[0] = SBox.s[index];
@@ -176,7 +176,7 @@ void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]) {
 // ======================== ENCRYPT ===========================
 // ============================================================
 
-// Encrypts a block of 64 bits
+
 void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
     // uint8_t block[8]correponde a um bloco de 64 bits / 8 bytes; cada bloco vai ter 4 carateres
 
@@ -224,7 +224,7 @@ void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]) {
     }
 }
 
-// Loops through the blocks and encrypts them
+
 void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t input_len) {
     uint64_t num_blocks = input_len / 8;
     for (uint64_t i = 0; i < num_blocks; i++) {

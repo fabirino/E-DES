@@ -11,60 +11,68 @@
 // ======================== GERAL =============================
 // ============================================================
 
+/**
+* @brief hashes a string using sha256
+* @param string string to be hashed
+* @param hash output hash
+*/
 void sha256(char *string, uint8_t *hash);
 
 /**
-* Converts bytes to char
-* Params: uint8_t input, char output, int len
-* Output: output
+* @brief converts an array of bytes to an array of chars
+* @param input array of bytes
+* @param output array of chars
+* @param len length of the input array
 */
 void bytes_to_char(uint8_t *input, char *output, int len);
 
 
 /**
-* Reads message from stdin and adds padding
-* Params: char msg
-* Output: msg
+* @brief reads message from stdin
+* Receives the pointer to the message and reallocates memory everytime a new byte is read
+* @param msg output message
 */
 void read_msg(char **msg);
 
 
 /**
-* Reads message bytes
-* Params: uint64_t bytes_read
-* Returns: input_bytes
+* @brief reads message from stdin and stores it in an array of bytes
+* @param bytes_read number of bytes read
+* @return array of bytes containing the message
 */
 uint8_t *read_msg_bytes(uint64_t *bytes_read);
 
 
 /**
-* Creates SBoxes
-* Params: SBox SBoxes, char password
-* Output: SBoxes
+* @brief creates the SBoxes from the key
+* @param SBoxes array of SBoxes
+* @param password key
 */
 void create_SBoxes(SBox *SBoxes, char *password);
 
 
 /**
-* Used to transform a 4 byte value using an S-Box
-* Params: SBox SBox, uint8_t input, uint8_t output
-* Output: output
+* @brief Used to transform a 4 byte array using an S-Box
+* @param SBox correspondent SBox
+* @param input array to be transformed
+* @param output transformed array
 */
 void f_SBox(SBox SBox, uint8_t input[4], uint8_t output[4]);
 
 
 /**
-* Adds padding to an input
-* Params: uint8_t input, uint64_t bytes_read
-* Output: input, bytes_read
+* @brief adds padding to an input
+* This function adds padding to an input so that it can be divided into blocks of 64 bits and adds the size of the padding to bytes_read
+* @param input input to be padded
+* @param bytes_read number of bytes read 
 */
 void add_padding(uint8_t *input, uint64_t *bytes_read);
 
 
 /**
-* Removes padding from an input
-* Params: uint8_t input, uint64_t len
-* Output: input, len
+* @brief removes padding from an input
+* @param input input to be unpadded
+* @param len length of the input
 */
 void remove_padding(uint8_t *input, uint64_t *len);
 
@@ -73,17 +81,21 @@ void remove_padding(uint8_t *input, uint64_t *len);
 // ============================================================
 
 /**
-* Encrypts a block of 64 bits
-* Params: SBox SBoxes, uint8_t block, uint8_t output
-* Output: output
+* @brief encrypts a block of 64 bits.
+* This function receives a block from the feistel_networks function and encrypts it
+* @param SBoxes array of SBoxes
+* @param block block to be encrypted
+* @param output encrypted block
 */
 void feistel_networks_block(SBox *SBoxes, uint8_t block[8], uint8_t output[8]);
 
 
 /**
-* Loops through the blocks and encrypts them
-* Params: SBox SBoxes, uint8_t input, uint8_t output, uint64_t input_len
-* Output: output
+* @brief loops through the blocks and encrypts them
+* @param SBoxes array of SBoxes
+* @param input input to be encrypted
+* @param output encrypted input
+* @param input_len length of the input
 */
 void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t input_len);
 
@@ -93,17 +105,21 @@ void feistel_networks(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t in
 
 
 /**
-* Decrypts a block of 64 bits
-* Params: SBox SBoxes, uint8_t block, uint8_t output
-* Output: output
+* @brief decrypts a block of 64 bits.
+* This function receives a block from the feistel_networks_decrypt function and decrypts it
+* @param SBoxes array of SBoxes
+* @param block block to be decrypted
+* @param output decrypted block
 */
 void feistel_networks_block_decrypt(SBox *SBoxes, uint8_t block[8], uint8_t output[8]);
 
 
 /**
-* Loops through the blocks and encrypts them
-* Params: SBox SBoxes, uint8_t input, uint8_t output, uint64_t input_len
-* Output: output
+* @brief loops through the blocks and decrypts them
+* @param SBoxes array of SBoxes
+* @param input input to be decrypted
+* @param output decrypted input
+* @param input_len length of the input
 */
 void feistel_networks_decrypt(SBox *SBoxes, uint8_t *input, uint8_t *output, uint64_t input_len);
 
