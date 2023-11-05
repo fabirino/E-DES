@@ -1,3 +1,11 @@
+"""!
+@file speed.py
+@brief This file contains the implementation of the speed tests for EDES and DES algorithms
+@author Fábio Santos 118351
+@author Rodrigo Marques 118587
+@date 05/01/2023
+"""
+
 import ctypes
 import platform
 import sys

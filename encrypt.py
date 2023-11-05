@@ -1,3 +1,9 @@
+"""!
+@author Fábio Santos 118351
+@author Rodrigo Marques 118587
+@date 05/01/2023
+"""
+
 import sys
 import EDES
 import sboxExample

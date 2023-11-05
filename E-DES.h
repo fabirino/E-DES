@@ -1,3 +1,11 @@
+/**
+ * @file E-DES.h
+ * @brief Header file for E-DES.c
+ * @author Fábio Santos 1188351
+ * @author Rodrigo Marques 118587
+ * @date 05/11/2023
+*/
+
 #include "sbox.h"
 #include <stdio.h>
 #include <stdlib.h>

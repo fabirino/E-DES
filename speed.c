@@ -1,3 +1,11 @@
+/**
+ * @file speed.c
+ * @brief Measures the time it takes to encrypt and decrypt a message using E-DES and DES
+ * @author Fábio Santos 1188351
+ * @author Rodrigo Marques 118587
+ * @date 05/11/2023
+*/
+
 #include "E-DES.h"
 #include <fcntl.h>
 #include <float.h>

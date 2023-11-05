@@ -1,3 +1,11 @@
+/**
+ * @file sboxExample.h
+ * @brief Example of a SBoxes with 16 SBoxes of 256 bytes each
+ * @author Fábio Santos 1188351
+ * @author Rodrigo Marques 118587
+ * @date 05/11/2023
+*/
+
 #include <stdint.h>
 
 uint8_t SBox_01[] = {

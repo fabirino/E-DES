@@ -1,3 +1,11 @@
+/**
+ * @file E-DES.c
+ * @brief Implementation of the E-DES algorithm
+ * @author Fábio Santos 1188351
+ * @author Rodrigo Marques 118587
+ * @date 05/11/2023
+*/
+
 #include "E-DES.h"
 
 // ============================================================
